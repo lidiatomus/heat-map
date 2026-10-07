@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CSI Solar Live Dashboard</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar app-nav">
+        <div class="brand"><p class="eyebrow">SOLIS · CSI</p><h1>Track telemetry</h1></div>
+        <nav class="view-tabs" aria-label="Dashboard view">
+          <button class="view-tab active" data-view="map" type="button">Track map</button>
+          <button class="view-tab" data-view="racing" type="button">Racing line</button>
+        </nav>
+        <div class="controls">
+          <label for="trackSelect">Circuit</label>
+          <select id="trackSelect" aria-label="Circuit"></select>
+          <label for="modeSelect">Mode</label>
+          <select id="modeSelect" aria-label="Telemetry mode">
+            <option value="live">Live</option>
+            <option value="history">History</option>
+          </select>
+          <span id="connectionBadge" class="badge waiting">Connecting</span>
+        </div>
+      </header>
+
+      <section id="historyControls" class="card history-controls hidden">
+        <label>From <input id="historyStart" type="datetime-local" /></label>
+        <label>To <input id="historyStop" type="datetime-local" /></label>
+        <button id="loadHistory" type="button">Load interval</button>
+        <button id="playPause" type="button" disabled>Play</button>
+        <label>Speed
+          <select id="replaySpeed">
+            <option value="60">1 min/s</option><option value="300">5 min/s</option>
+            <option value="900">15 min/s</option><option value="3600">1 hour/s</option>
+          </select>
+        </label>
+        <input id="replaySlider" type="range" min="0" max="0" value="0" disabled aria-label="Replay position" />
+        <strong id="replayCounter">No interval loaded</strong>
+        <p id="historyError" class="history-error hidden" role="alert"></p>
+      </section>
+
+      <div id="mapView" class="dashboard-view">
+      <section class="hero-grid">
+        <article class="card map-card">
+          <div class="card-heading"><div><p id="mapModeLabel" class="label">LIVE IRRADIANCE MAP</p><h2 id="trackName">Loading circuit…</h2></div><p id="trackLength" class="muted">— km</p></div>
+          <div class="stage">
+            <div class="map-zoom" data-zoom-target="irradianceSvg" aria-label="Track map zoom controls">
+              <button type="button" data-zoom="in" title="Zoom in">+</button>
+              <button type="button" data-zoom="out" title="Zoom out">−</button>
+              <button type="button" data-zoom="reset" title="Reset zoom">Reset</button>
+            </div>
+            <svg id="irradianceSvg" viewBox="0 0 1000 700" role="img" aria-label="Track irradiance and live car position">
+              <path id="irradianceShadow" class="track-shadow" />
+              <g id="irradianceSegments"></g>
+              <g id="irradianceCar" class="car-marker hidden"><circle r="18" class="car-ring"/><circle r="8" class="car-dot"/></g>
+            </svg>
+            <div id="irradianceEmpty" class="empty-state hidden">Waiting for a valid GPS position near this circuit.</div>
+          </div>
+          <div class="legend"><span>Low</span><i class="gradient"></i><span>High</span><strong id="irradianceRange">— W/m²</strong><span class="weather-pill">Weather: <strong id="weatherSource">—</strong></span></div>
+        </article>
+
+        <div class="hidden" aria-hidden="true">
+          <span id="telemetryModeLabel"></span><span id="latitude"></span>
+          <span id="longitude"></span><span id="distance"></span>
+          <span id="sampleAge"></span>
+          <span id="timestamp"></span><span id="statusMessage"></span>
+        </div>
+      </section>
+
+      <section class="charts-grid compact-charts">
+        <article class="card section-card">
+          <p class="label">POWER COMPARISON</p><h2>Calculated solar vs measured MPPT</h2>
+          <div class="chart-wrap"><svg id="powerChart" viewBox="0 0 900 380" role="img"><g id="powerGrid"></g><path id="calculatedLine" class="chart-line calculated"/><path id="measuredLine" class="chart-line measured"/></svg></div>
+          <div class="chart-legend"><span><i class="dot calc"></i>Calculated <strong id="calculatedPower">— W</strong></span><span><i class="dot mppt"></i>MPPT <strong id="measuredPower">— W</strong></span><span id="mpptCount" class="muted">— active</span></div>
+        </article>
+
+        <article class="card section-card">
+          <p class="label">SECTOR SUMMARY</p><h2>Average irradiance by sector</h2>
+          <div id="sectorChart" class="bars"></div>
+        </article>
+      </section>
+      </div>
+
+      <section id="racingView" class="card section-card dashboard-view hidden">
+        <div class="card-heading"><div><p class="label">BEST RACING LINE</p><h2>Ideal line and car position</h2></div><p id="racingStatus" class="muted">Loading…</p></div>
+        <div class="stage compact-stage">
+          <div class="map-zoom" data-zoom-target="racingSvg" aria-label="Racing line zoom controls">
+            <button type="button" data-zoom="in" title="Zoom in">+</button>
+            <button type="button" data-zoom="out" title="Zoom out">−</button>
+            <button type="button" data-zoom="reset" title="Reset zoom">Reset</button>
+          </div>
+          <svg id="racingSvg" viewBox="0 0 1000 700" role="img" aria-label="Best racing line and car position">
+            <path id="racingTrackShadow" class="track-shadow"/><path id="racingTrack" class="base-track"/>
+            <path id="racingLine" class="racing-line"/>
+            <g id="racingCar" class="car-marker hidden"><circle r="18" class="car-ring"/><circle r="8" class="car-dot"/></g>
+          </svg>
+        </div>
+      </section>
+    </main>
+    <script src="/static/app.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.DS_Store
+data/raw/dem/*.tif
+outputs/plots/*.png
+outputs/logs/*
+.env

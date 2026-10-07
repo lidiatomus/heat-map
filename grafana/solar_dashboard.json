@@ -1,0 +1,101 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_INFLUXDB",
+      "label": "InfluxDB",
+      "description": "InfluxDB data source configured with Flux",
+      "type": "datasource",
+      "pluginId": "influxdb",
+      "pluginName": "InfluxDB"
+    }
+  ],
+  "annotations": {"list": []},
+  "editable": true,
+  "graphTooltip": 1,
+  "panels": [
+    {
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "fieldConfig": {"defaults": {}, "overrides": []},
+      "gridPos": {"h": 12, "w": 12, "x": 0, "y": 0},
+      "id": 1,
+      "options": {
+        "basemap": {"config": {}, "name": "Layer 0", "type": "default"},
+        "controls": {"mouseWheelZoom": true, "showAttribution": true, "showDebug": false, "showMeasure": false, "showScale": true, "showZoom": true},
+        "layers": [
+          {
+            "config": {
+              "color": {"fixed": "red"},
+              "location": {"latitude": "gps_latitude", "longitude": "gps_longitude", "mode": "coords"},
+              "size": {"fixed": 8}
+            },
+            "name": "Vehicle GPS",
+            "type": "markers"
+          }
+        ],
+        "tooltip": {"mode": "details"}
+      },
+      "targets": [
+        {
+          "query": "from(bucket: \"tests\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"solar_model_live\" and r.track == \"bucharest\")\n  |> filter(fn: (r) => r._field == \"gps_latitude\" or r._field == \"gps_longitude\")\n  |> aggregateWindow(every: 2s, fn: last, createEmpty: false)\n  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")",
+          "refId": "A"
+        }
+      ],
+      "title": "Vehicle position - Bucharest",
+      "type": "geomap"
+    },
+    {
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "fieldConfig": {"defaults": {"unit": "watt"}, "overrides": []},
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+      "id": 2,
+      "options": {"legend": {"displayMode": "list", "placement": "bottom", "showLegend": true}, "tooltip": {"mode": "multi"}},
+      "targets": [
+        {
+          "query": "from(bucket: \"tests\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"solar_model_live\" and r.track == \"bucharest\")\n  |> filter(fn: (r) => r._field == \"calculated_solar_power_w\" or r._field == \"measured_solar_power_w\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)",
+          "refId": "A"
+        }
+      ],
+      "title": "Solar model vs measured MPPT",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "fieldConfig": {"defaults": {"min": 0, "max": 4}, "overrides": []},
+      "gridPos": {"h": 4, "w": 6, "x": 12, "y": 8},
+      "id": 3,
+      "options": {"colorMode": "value", "graphMode": "area", "justifyMode": "auto", "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto"},
+      "targets": [
+        {
+          "query": "from(bucket: \"tests\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"solar_model_live\" and r.track == \"bucharest\" and r._field == \"active_mppt_count\")\n  |> last()",
+          "refId": "A"
+        }
+      ],
+      "title": "Active MPPTs",
+      "type": "stat"
+    },
+    {
+      "datasource": {"type": "influxdb", "uid": "${DS_INFLUXDB}"},
+      "fieldConfig": {"defaults": {"unit": "irradiance"}, "overrides": []},
+      "gridPos": {"h": 4, "w": 6, "x": 18, "y": 8},
+      "id": 4,
+      "options": {"colorMode": "value", "graphMode": "area", "justifyMode": "auto", "reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "textMode": "auto"},
+      "targets": [
+        {
+          "query": "from(bucket: \"tests\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"solar_model_live\" and r.track == \"bucharest\" and r._field == \"irradiance_wm2\")\n  |> last()",
+          "refId": "A"
+        }
+      ],
+      "title": "Calculated irradiance",
+      "type": "stat"
+    }
+  ],
+  "refresh": "2s",
+  "schemaVersion": 39,
+  "tags": ["SOLIS", "solar", "bucharest"],
+  "templating": {"list": []},
+  "time": {"from": "now-15m", "to": "now"},
+  "timezone": "browser",
+  "title": "SOLIS Solar Vehicle - Bucharest",
+  "uid": "solis-bucharest-solar",
+  "version": 1
+}

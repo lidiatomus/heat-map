@@ -1,0 +1,12 @@
+Solar ideal line suggestions
+============================
+
+This is not a full racing-line optimizer. It highlights the track segments with the best solar exposure.
+
+Best average sector: Sector 3
+Top 15 solar-friendly segments saved in CSV.
+
+Interpretation:
+- higher irradiance_wm2 means more solar input
+- higher shadow_factor means less shadow
+- higher solar_score means better segment for solar exposure

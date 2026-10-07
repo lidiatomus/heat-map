@@ -1,0 +1,10 @@
+Track length: 6334.6 m
+Estimated lap time: 5.17 min
+Race duration: 24 h
+Total pit time: 180.0 min
+Driving time: 21.00 h
+Laps: 243
+Consumption per lap with slope: 539.7 Wh
+Solar energy: 1.95 kWh
+Estimated consumption: 131.15 kWh
+Final battery: 0.00 kWh

@@ -1,0 +1,15 @@
+Live solar ideal line suggestions
+================================
+
+Updated at: 2026-07-27 20:58:46.565800+03:00
+Track: Bucharest
+
+Best average sector right now: Sector 3
+Worst average sector right now: Sector 1
+
+Interpretation:
+- high irradiance = more useful solar input
+- high shadow factor = less shadow penalty
+- high solar_score = segment is currently solar-friendly
+
+Important: this suggests solar-friendly segments, not a full racing-line optimizer.
